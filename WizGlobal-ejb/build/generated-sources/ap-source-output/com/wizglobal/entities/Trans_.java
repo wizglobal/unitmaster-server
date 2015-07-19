@@ -1,0 +1,96 @@
+package com.wizglobal.entities;
+
+import java.util.Date;
+import javax.annotation.Generated;
+import javax.persistence.metamodel.SingularAttribute;
+import javax.persistence.metamodel.StaticMetamodel;
+
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2015-07-16T12:22:25")
+@StaticMetamodel(Trans.class)
+public class Trans_ { 
+
+    public static volatile SingularAttribute<Trans, String> reversedby;
+    public static volatile SingularAttribute<Trans, String> confirmedby;
+    public static volatile SingularAttribute<Trans, Double> iRate;
+    public static volatile SingularAttribute<Trans, Date> systime;
+    public static volatile SingularAttribute<Trans, Double> empregamt;
+    public static volatile SingularAttribute<Trans, String> compname;
+    public static volatile SingularAttribute<Trans, Integer> redone;
+    public static volatile SingularAttribute<Trans, Integer> currage;
+    public static volatile SingularAttribute<Trans, String> reason;
+    public static volatile SingularAttribute<Trans, Double> bouncefee;
+    public static volatile SingularAttribute<Trans, String> tMode;
+    public static volatile SingularAttribute<Trans, Integer> basecurrency;
+    public static volatile SingularAttribute<Trans, Double> amount;
+    public static volatile SingularAttribute<Trans, Date> transDate;
+    public static volatile SingularAttribute<Trans, Date> confirmeddate;
+    public static volatile SingularAttribute<Trans, Integer> tyear;
+    public static volatile SingularAttribute<Trans, Integer> confirmed;
+    public static volatile SingularAttribute<Trans, Double> adminFee;
+    public static volatile SingularAttribute<Trans, Integer> reconciled;
+    public static volatile SingularAttribute<Trans, Double> employeeamt;
+    public static volatile SingularAttribute<Trans, Double> employeeunits;
+    public static volatile SingularAttribute<Trans, Double> emplregamt;
+    public static volatile SingularAttribute<Trans, String> paymentscheduledby;
+    public static volatile SingularAttribute<Trans, String> memberNo;
+    public static volatile SingularAttribute<Trans, Double> runningunits;
+    public static volatile SingularAttribute<Trans, String> portfolio;
+    public static volatile SingularAttribute<Trans, String> bnkcode;
+    public static volatile SingularAttribute<Trans, String> descript;
+    public static volatile SingularAttribute<Trans, String> accountNo;
+    public static volatile SingularAttribute<Trans, String> mop;
+    public static volatile SingularAttribute<Trans, String> transNo;
+    public static volatile SingularAttribute<Trans, String> currencyname;
+    public static volatile SingularAttribute<Trans, Integer> deleted;
+    public static volatile SingularAttribute<Trans, String> acctno;
+    public static volatile SingularAttribute<Trans, Integer> recowithbabk;
+    public static volatile SingularAttribute<Trans, Double> emplunregamt;
+    public static volatile SingularAttribute<Trans, Date> paymentscheduleddate;
+    public static volatile SingularAttribute<Trans, String> transType;
+    public static volatile SingularAttribute<Trans, Double> price;
+    public static volatile SingularAttribute<Trans, Double> initdepo;
+    public static volatile SingularAttribute<Trans, Double> perval;
+    public static volatile SingularAttribute<Trans, Date> servertime;
+    public static volatile SingularAttribute<Trans, Date> sysdate;
+    public static volatile SingularAttribute<Trans, String> contrtype;
+    public static volatile SingularAttribute<Trans, Double> withfee;
+    public static volatile SingularAttribute<Trans, String> uName;
+    public static volatile SingularAttribute<Trans, Double> employeramt;
+    public static volatile SingularAttribute<Trans, String> docNo;
+    public static volatile SingularAttribute<Trans, Double> netamount;
+    public static volatile SingularAttribute<Trans, Double> chequefee;
+    public static volatile SingularAttribute<Trans, String> noofshares;
+    public static volatile SingularAttribute<Trans, String> remarks;
+    public static volatile SingularAttribute<Trans, Double> emplunregunit;
+    public static volatile SingularAttribute<Trans, String> drawername;
+    public static volatile SingularAttribute<Trans, Integer> newdbcolum;
+    public static volatile SingularAttribute<Trans, Integer> currency;
+    public static volatile SingularAttribute<Trans, Date> deldate;
+    public static volatile SingularAttribute<Trans, Integer> valueno;
+    public static volatile SingularAttribute<Trans, Integer> reversed;
+    public static volatile SingularAttribute<Trans, String> deletedby;
+    public static volatile SingularAttribute<Trans, String> transtype;
+    public static volatile SingularAttribute<Trans, Integer> edited;
+    public static volatile SingularAttribute<Trans, Integer> tmonth;
+    public static volatile SingularAttribute<Trans, Double> emplregunit;
+    public static volatile SingularAttribute<Trans, Integer> paymentscheduled;
+    public static volatile SingularAttribute<Trans, Integer> paymentscheduledbatch;
+    public static volatile SingularAttribute<Trans, Double> adminfee;
+    public static volatile SingularAttribute<Trans, Double> empregunit;
+    public static volatile SingularAttribute<Trans, Date> reverseddate;
+    public static volatile SingularAttribute<Trans, Date> depodate;
+    public static volatile SingularAttribute<Trans, Double> taxunits;
+    public static volatile SingularAttribute<Trans, Double> empunregamt;
+    public static volatile SingularAttribute<Trans, String> bankaccdets;
+    public static volatile SingularAttribute<Trans, Date> datedrafted;
+    public static volatile SingularAttribute<Trans, Integer> transId;
+    public static volatile SingularAttribute<Trans, Double> nav;
+    public static volatile SingularAttribute<Trans, Double> taxamt;
+    public static volatile SingularAttribute<Trans, Double> empunregunit;
+    public static volatile SingularAttribute<Trans, String> fullName;
+    public static volatile SingularAttribute<Trans, String> drawerpayee;
+    public static volatile SingularAttribute<Trans, Double> employerunits;
+    public static volatile SingularAttribute<Trans, String> comments;
+    public static volatile SingularAttribute<Trans, String> shift;
+
+}
