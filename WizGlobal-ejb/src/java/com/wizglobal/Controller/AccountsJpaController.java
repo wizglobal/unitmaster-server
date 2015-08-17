@@ -5,6 +5,7 @@
  */
 package com.wizglobal.Controller;
 
+import com.wizglobal.Helpers.AgentAccountList;
 import com.wizglobal.Service.exceptions.NonexistentEntityException;
 import com.wizglobal.Service.exceptions.PreexistingEntityException;
 import com.wizglobal.Service.exceptions.RollbackFailureException;
@@ -12,6 +13,7 @@ import com.wizglobal.entities.Accounts;
 import com.wizglobal.Helpers.CustomeragentsAccounts;
 import com.wizglobal.listener.LocalEntityManagerFactory;
 import java.io.Serializable;
+import java.sql.ResultSet;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
@@ -24,8 +26,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
 
-@Named
-@Stateless
+
 public class AccountsJpaController implements Serializable {
 
 
@@ -177,6 +178,20 @@ public class AccountsJpaController implements Serializable {
         }
     }
     
+        public List findAgentCustomerList(String agentNo) {
+        String querry = "SELECT distinct AGENTS.AGENT_NO, AGENTS.AGENT_NAME, MEMBERS.MEMBER_NO,MEMBERS.TITLE,MEMBERS.ALLNAMES,MEMBERS.POST_ADDRESS,MEMBERS.REG_DATE,MEMBERS.TEL_NO,MEMBERS.PHYS_ADDRESS,MEMBERS.TOWN,MEMBERS.STREET,MEMBERS.GSM_NO,MEMBERS.E_MAIL,MEMBERS.ID_NO,MEMBERS.PIN_NO FROM ACCOUNTS INNER JOIN AGENTS  ON AGENTS.AGENT_NO = ACCOUNTS.AGENT_NO INNER JOIN MEMBERS  ON ACCOUNTS.MEMBER_NO = MEMBERS.MEMBER_NO where AGENTS.AGENT_NO=?";
+        try {
+             em = LocalEntityManagerFactory.createEntityManager();
+              return    em.createNativeQuery(querry)
+                          .setParameter("1", agentNo).getResultList();
+                          
+             
+        } finally {
+            em.close();
+        }
+    }
+     
+     
     public int getAccountsCount() {
       
         try {

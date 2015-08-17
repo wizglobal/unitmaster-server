@@ -8,7 +8,8 @@ package com.wizglobal.Controller;
 import com.wizglobal.Controller.exceptions.NonexistentEntityException;
 import com.wizglobal.Controller.exceptions.PreexistingEntityException;
 import com.wizglobal.Controller.exceptions.RollbackFailureException;
-import com.wizglobal.entities.Trans;
+import com.wizglobal.entities.TransAgent;
+import com.wizglobal.entities.TransAgentComm;
 import com.wizglobal.listener.LocalEntityManagerFactory;
 import java.io.Serializable;
 import java.util.List;
@@ -25,18 +26,18 @@ import javax.transaction.UserTransaction;
  *
  * @author nhif
  */
-public class TransJpaController implements Serializable {
+public class TransAgentCommJpaController implements Serializable {
 
-    EntityManager em; 
+      EntityManager em; 
     @Resource 
     UserTransaction utx; 
 
-    public void create(Trans trans) throws PreexistingEntityException, RollbackFailureException, Exception {
+    public void create(TransAgentComm transAgentComm) throws PreexistingEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
             utx.begin();
             em = LocalEntityManagerFactory.createEntityManager();
-            em.persist(trans);
+            em.persist(transAgentComm);
             utx.commit();
         } catch (Exception ex) {
             try {
@@ -44,8 +45,8 @@ public class TransJpaController implements Serializable {
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
-            if (findTrans(trans.getTransId()) != null) {
-                throw new PreexistingEntityException("Trans " + trans + " already exists.", ex);
+            if (findTransAgentComm(transAgentComm.getTransId()) != null) {
+                throw new PreexistingEntityException("TransAgentComm " + transAgentComm + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -55,12 +56,12 @@ public class TransJpaController implements Serializable {
         }
     }
 
-    public void edit(Trans trans) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void edit(TransAgentComm transAgentComm) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
             utx.begin();
             em = LocalEntityManagerFactory.createEntityManager();
-            trans = em.merge(trans);
+            transAgentComm = em.merge(transAgentComm);
             utx.commit();
         } catch (Exception ex) {
             try {
@@ -70,9 +71,9 @@ public class TransJpaController implements Serializable {
             }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = trans.getTransId();
-                if (findTrans(id) == null) {
-                    throw new NonexistentEntityException("The trans with id " + id + " no longer exists.");
+                Integer id = transAgentComm.getTransId();
+                if (findTransAgentComm(id) == null) {
+                    throw new NonexistentEntityException("The transAgentComm with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -88,14 +89,14 @@ public class TransJpaController implements Serializable {
         try {
             utx.begin();
             em = LocalEntityManagerFactory.createEntityManager();
-            Trans trans;
+            TransAgentComm transAgentComm;
             try {
-                trans = em.getReference(Trans.class, id);
-                trans.getTransId();
+                transAgentComm = em.getReference(TransAgentComm.class, id);
+                transAgentComm.getTransId();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The trans with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The transAgentComm with id " + id + " no longer exists.", enfe);
             }
-            em.remove(trans);
+            em.remove(transAgentComm);
             utx.commit();
         } catch (Exception ex) {
             try {
@@ -111,19 +112,19 @@ public class TransJpaController implements Serializable {
         }
     }
 
-    public List<Trans> findTransEntities() {
-        return findTransEntities(true, -1, -1);
+    public List<TransAgentComm> findTransAgentCommEntities() {
+        return findTransAgentCommEntities(true, -1, -1);
     }
 
-    public List<Trans> findTransEntities(int maxResults, int firstResult) {
-        return findTransEntities(false, maxResults, firstResult);
+    public List<TransAgentComm> findTransAgentCommEntities(int maxResults, int firstResult) {
+        return findTransAgentCommEntities(false, maxResults, firstResult);
     }
 
-    private List<Trans> findTransEntities(boolean all, int maxResults, int firstResult) {
+    private List<TransAgentComm> findTransAgentCommEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = LocalEntityManagerFactory.createEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(Trans.class));
+            cq.select(cq.from(TransAgentComm.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -135,52 +136,38 @@ public class TransJpaController implements Serializable {
         }
     }
 
-    public Trans findTrans(Integer id) {
+    public TransAgentComm findTransAgentComm(Integer id) {
         EntityManager em = LocalEntityManagerFactory.createEntityManager();
         try {
-            return em.find(Trans.class, id);
+            return em.find(TransAgentComm.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int getTransCount() {
+    public int getTransAgentCommCount() {
         EntityManager em = LocalEntityManagerFactory.createEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Trans> rt = cq.from(Trans.class);
+            Root<TransAgentComm> rt = cq.from(TransAgentComm.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
         } finally {
             em.close();
         }
-    } public List<Trans> ListaccountTransactions(String acctNo) {
-        String querry = "SELECT * FROM TRANS WHERE ACCOUNT_NO=? AND CONFIRMED IS NOT NULL AND DELETED IS NULL AND REVERSED IS NULL order by TRANS_DATE asc";
+    }
+    
+     public List<TransAgentComm> findAgentDetailedTransactions(String membernumber) {
+      String querry = "select TRANS_ID, TRANS_DATE, MEMBER_NO, FULL_NAME, ACCOUNT_NO, PORTFOLIO, AMOUNT, NETAMOUNT, AMTVALUE, PERVALUE from TRANS_AGENT_COMM where MEMBER_NO=?  order by ACCOUNT_NO, TRANS_DATE"; // removed and USED is not nulland USED is not null
+         EntityManager em = LocalEntityManagerFactory.createEntityManager(); 
         try {
-             em = LocalEntityManagerFactory.createEntityManager();
-              return    em.createNativeQuery(querry,Trans.class)
-                          .setParameter("1", acctNo)
+                  return    em.createNativeQuery(querry,TransAgentComm.class)
+                          .setParameter("1", membernumber)
                            .getResultList();
-             
         } finally {
             em.close();
         }
     }
-    public List<Trans> ListunconfirmedTransactions(String username) {
-        String querry = "SELECT * FROM TRANS WHERE CONFIRMED IS NULL AND U_NAME !=? ";
-        try {
-             em = LocalEntityManagerFactory.createEntityManager();
-              return    em.createNativeQuery(querry,Trans.class)
-                          .setParameter("1", username)
-                           .getResultList();
-             
-        } finally {
-            em.close();
-        }
-    }
-    
-    
-    
     
 }

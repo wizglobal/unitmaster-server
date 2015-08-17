@@ -8,16 +8,11 @@ package com.wizglobal.Controller;
 import com.wizglobal.Controller.exceptions.NonexistentEntityException;
 import com.wizglobal.Controller.exceptions.PreexistingEntityException;
 import com.wizglobal.Controller.exceptions.RollbackFailureException;
-import com.wizglobal.entities.Accounts;
-import com.wizglobal.entities.Agents;
-import com.wizglobal.entities.Memberpass;
-import com.wizglobal.entities.Userdetails;
+import com.wizglobal.entities.Usersetup;
 import com.wizglobal.listener.LocalEntityManagerFactory;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.Resource;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
@@ -30,31 +25,27 @@ import javax.transaction.UserTransaction;
  *
  * @author nhif
  */
-@TransactionManagement(TransactionManagementType.BEAN)
-public class MemberpassJpaController implements Serializable {
+public class UsersetupJpaController implements Serializable {
 
-      EntityManager em; 
+ EntityManager em; 
     @Resource 
     UserTransaction utx; 
 
-    public void create(Memberpass memberpass) throws PreexistingEntityException, RollbackFailureException, Exception {
-        
-        
+    public void create(Usersetup usersetup) throws PreexistingEntityException, RollbackFailureException, Exception {
+        EntityManager em = null;
         try {
-           System.out.println("Member username "+memberpass.getUsername());
-            em = LocalEntityManagerFactory.createEntityManager(); 
-            em.getTransaction().begin();
-            em.persist(memberpass);
-            em.getTransaction().commit();
+            utx.begin();
+            em = LocalEntityManagerFactory.createEntityManager();
+            em.persist(usersetup);
+            utx.commit();
         } catch (Exception ex) {
             try {
-                em.getTransaction().rollback();
+                utx.rollback();
             } catch (Exception re) {
-                re.printStackTrace();
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
-            if (findMemberpass(memberpass.getUsername()) != null) {
-                throw new PreexistingEntityException("Memberpass " + memberpass + " already exists.", ex);
+            if (findUsersetup(usersetup.getUserId()) != null) {
+                throw new PreexistingEntityException("Usersetup " + usersetup + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -64,38 +55,39 @@ public class MemberpassJpaController implements Serializable {
         }
     }
     
-    public int createAgent(Userdetails agent){
-        String querry ="INSERT INTO MEMBERPASS (REFNO,E_MAIL,USERNAME,PASSWRD,CATEGORY) VALUES(?,?,?,?,?)";
+        public int updateStaff(String staffno){
+        String querry ="UPDATE USERSETUP SET WEBPASS ='1' where USER_ID=?";
+        int k=0;
         try {
            
              em = LocalEntityManagerFactory.createEntityManager();
              em.getTransaction().begin();
-            int k= em.createNativeQuery(querry)
-                 .setParameter(1, agent.getRefno())
-                 .setParameter(2, agent.getEMail())
-                 .setParameter(3, agent.getUsername())
-                 .setParameter(4, agent.getPasswrd())
-                 .setParameter(5, agent.getCategory())   
+            k= em.createNativeQuery(querry)
+                 .setParameter(1, staffno)      
                  .executeUpdate();
+            
             em.getTransaction().commit();
-           return k; 
+            
+            
+           
         } catch (Exception ex){
             ex.printStackTrace();
+            k=0;
         }
         
         finally {
             em.close();
-            return 0;
+            return k;
         }
         
     }
 
-    public void edit(Memberpass memberpass) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void edit(Usersetup usersetup) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
             utx.begin();
-             em = LocalEntityManagerFactory.createEntityManager();  
-            memberpass = em.merge(memberpass);
+            em = LocalEntityManagerFactory.createEntityManager();
+            usersetup = em.merge(usersetup);
             utx.commit();
         } catch (Exception ex) {
             try {
@@ -105,9 +97,9 @@ public class MemberpassJpaController implements Serializable {
             }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                String id = memberpass.getUsername();
-                if (findMemberpass(id) == null) {
-                    throw new NonexistentEntityException("The memberpass with id " + id + " no longer exists.");
+                String id = usersetup.getUserId();
+                if (findUsersetup(id) == null) {
+                    throw new NonexistentEntityException("The usersetup with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -122,15 +114,15 @@ public class MemberpassJpaController implements Serializable {
         EntityManager em = null;
         try {
             utx.begin();
-             em = LocalEntityManagerFactory.createEntityManager();  
-            Memberpass memberpass;
+            em = LocalEntityManagerFactory.createEntityManager();
+            Usersetup usersetup;
             try {
-                memberpass = em.getReference(Memberpass.class, id);
-                memberpass.getUsername();
+                usersetup = em.getReference(Usersetup.class, id);
+                usersetup.getUserId();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The memberpass with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The usersetup with id " + id + " no longer exists.", enfe);
             }
-            em.remove(memberpass);
+            em.remove(usersetup);
             utx.commit();
         } catch (Exception ex) {
             try {
@@ -146,19 +138,19 @@ public class MemberpassJpaController implements Serializable {
         }
     }
 
-    public List<Memberpass> findMemberpassEntities() {
-        return findMemberpassEntities(true, -1, -1);
+    public List<Usersetup> findUsersetupEntities() {
+        return findUsersetupEntities(true, -1, -1);
     }
 
-    public List<Memberpass> findMemberpassEntities(int maxResults, int firstResult) {
-        return findMemberpassEntities(false, maxResults, firstResult);
+    public List<Usersetup> findUsersetupEntities(int maxResults, int firstResult) {
+        return findUsersetupEntities(false, maxResults, firstResult);
     }
 
-    private List<Memberpass> findMemberpassEntities(boolean all, int maxResults, int firstResult) {
-         em = LocalEntityManagerFactory.createEntityManager();  
+    private List<Usersetup> findUsersetupEntities(boolean all, int maxResults, int firstResult) {
+        EntityManager em = LocalEntityManagerFactory.createEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(Memberpass.class));
+            cq.select(cq.from(Usersetup.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -170,36 +162,39 @@ public class MemberpassJpaController implements Serializable {
         }
     }
 
-    public Memberpass findMemberpass(String id) {
-        EntityManager  em = LocalEntityManagerFactory.createEntityManager();  
+    public Usersetup findUsersetup(String id) {
+        EntityManager em = LocalEntityManagerFactory.createEntityManager();
         try {
-            return em.find(Memberpass.class, id);
+            return em.find(Usersetup.class, id);
         } finally {
             em.close();
         }
     }
-    
-     public Memberpass findMemberDetails(String username) {
-       
-        try {
-             em = LocalEntityManagerFactory.createEntityManager();
-            return em.createNamedQuery("Memberpass.findByUsername", Memberpass.class)
-                    .setParameter("username", username)
-                    .getSingleResult();
-        } finally {
-            em.close();
-        }
-    }
-    
 
-    public int getMemberpassCount() {
+    public int getUsersetupCount() {
         EntityManager em = LocalEntityManagerFactory.createEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Memberpass> rt = cq.from(Memberpass.class);
+            Root<Usersetup> rt = cq.from(Usersetup.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
+        } finally {
+            em.close();
+        }
+    }
+    
+         
+       public List<Usersetup> findUnregisteredStaff() {
+        
+       String querry = "select * from USERSETUP where ((WEBPASS <> '1') or (WEBPASS is null)) AND CONFIRMED=1 " ;
+         EntityManager em = LocalEntityManagerFactory.createEntityManager();
+        try {
+             
+            
+              return    em.createNativeQuery(querry,Usersetup.class)
+                           .getResultList();
+             
         } finally {
             em.close();
         }

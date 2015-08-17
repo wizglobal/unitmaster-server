@@ -55,8 +55,36 @@ public class AgentsJpaController implements Serializable {
             }
         }
     }
-
-    public void edit(Agents agents) throws NonexistentEntityException, RollbackFailureException, Exception {
+ 
+   
+    public int updateAgent(String agentno){
+        String querry ="UPDATE AGENTS SET WEBPASS='1' WHERE AGENT_NO=?";
+        int k=0;
+        try {
+           
+             em = LocalEntityManagerFactory.createEntityManager();
+             em.getTransaction().begin();
+            k= em.createNativeQuery(querry)
+                 .setParameter(1, agentno)      
+                 .executeUpdate();
+            
+            em.getTransaction().commit();
+            
+            
+           
+        } catch (Exception ex){
+            ex.printStackTrace();
+            k=0;
+        }
+        
+        finally {
+            em.close();
+            return k;
+        }
+        
+    }
+   
+    public void edit(Agents agents) throws NonexistentEntityException, RollbackFailureException, Exception   {
         EntityManager em = null;
         try {
             utx.begin();
@@ -165,6 +193,21 @@ public class AgentsJpaController implements Serializable {
             return em.createNamedQuery("Agents.findByAgentNo", Agents.class)
                     .setParameter("agentNo", agentnumber)
                     .getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+     
+       public List<Agents> findUnregisteredAgents() {
+        
+       String querry = "select * from AGENTS where WEBPASS IS NULL AND CONFIRMED ='1' " ;
+         EntityManager em = LocalEntityManagerFactory.createEntityManager();
+        try {
+             
+            
+              return    em.createNativeQuery(querry,Agents.class)
+                           .getResultList();
+             
         } finally {
             em.close();
         }

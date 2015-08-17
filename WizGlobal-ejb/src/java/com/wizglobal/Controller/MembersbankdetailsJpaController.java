@@ -8,7 +8,8 @@ package com.wizglobal.Controller;
 import com.wizglobal.Controller.exceptions.NonexistentEntityException;
 import com.wizglobal.Controller.exceptions.PreexistingEntityException;
 import com.wizglobal.Controller.exceptions.RollbackFailureException;
-import com.wizglobal.entities.Trans;
+import com.wizglobal.entities.Members;
+import com.wizglobal.entities.Membersbankdetails;
 import com.wizglobal.listener.LocalEntityManagerFactory;
 import java.io.Serializable;
 import java.util.List;
@@ -25,18 +26,18 @@ import javax.transaction.UserTransaction;
  *
  * @author nhif
  */
-public class TransJpaController implements Serializable {
+public class MembersbankdetailsJpaController implements Serializable {
 
     EntityManager em; 
     @Resource 
     UserTransaction utx; 
 
-    public void create(Trans trans) throws PreexistingEntityException, RollbackFailureException, Exception {
+    public void create(Membersbankdetails membersbankdetails) throws PreexistingEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
             utx.begin();
             em = LocalEntityManagerFactory.createEntityManager();
-            em.persist(trans);
+            em.persist(membersbankdetails);
             utx.commit();
         } catch (Exception ex) {
             try {
@@ -44,8 +45,8 @@ public class TransJpaController implements Serializable {
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
-            if (findTrans(trans.getTransId()) != null) {
-                throw new PreexistingEntityException("Trans " + trans + " already exists.", ex);
+            if (findMembersbankdetails(membersbankdetails.getMemberno()) != null) {
+                throw new PreexistingEntityException("Membersbankdetails " + membersbankdetails + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -55,12 +56,12 @@ public class TransJpaController implements Serializable {
         }
     }
 
-    public void edit(Trans trans) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void edit(Membersbankdetails membersbankdetails) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
             utx.begin();
             em = LocalEntityManagerFactory.createEntityManager();
-            trans = em.merge(trans);
+            membersbankdetails = em.merge(membersbankdetails);
             utx.commit();
         } catch (Exception ex) {
             try {
@@ -70,9 +71,9 @@ public class TransJpaController implements Serializable {
             }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = trans.getTransId();
-                if (findTrans(id) == null) {
-                    throw new NonexistentEntityException("The trans with id " + id + " no longer exists.");
+                String id = membersbankdetails.getMemberno();
+                if (findMembersbankdetails(id) == null) {
+                    throw new NonexistentEntityException("The membersbankdetails with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -83,19 +84,19 @@ public class TransJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void destroy(String id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
             utx.begin();
             em = LocalEntityManagerFactory.createEntityManager();
-            Trans trans;
+            Membersbankdetails membersbankdetails;
             try {
-                trans = em.getReference(Trans.class, id);
-                trans.getTransId();
+                membersbankdetails = em.getReference(Membersbankdetails.class, id);
+                membersbankdetails.getMemberno();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The trans with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The membersbankdetails with id " + id + " no longer exists.", enfe);
             }
-            em.remove(trans);
+            em.remove(membersbankdetails);
             utx.commit();
         } catch (Exception ex) {
             try {
@@ -111,19 +112,19 @@ public class TransJpaController implements Serializable {
         }
     }
 
-    public List<Trans> findTransEntities() {
-        return findTransEntities(true, -1, -1);
+    public List<Membersbankdetails> findMembersbankdetailsEntities() {
+        return findMembersbankdetailsEntities(true, -1, -1);
     }
 
-    public List<Trans> findTransEntities(int maxResults, int firstResult) {
-        return findTransEntities(false, maxResults, firstResult);
+    public List<Membersbankdetails> findMembersbankdetailsEntities(int maxResults, int firstResult) {
+        return findMembersbankdetailsEntities(false, maxResults, firstResult);
     }
 
-    private List<Trans> findTransEntities(boolean all, int maxResults, int firstResult) {
+    private List<Membersbankdetails> findMembersbankdetailsEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = LocalEntityManagerFactory.createEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(Trans.class));
+            cq.select(cq.from(Membersbankdetails.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -135,52 +136,38 @@ public class TransJpaController implements Serializable {
         }
     }
 
-    public Trans findTrans(Integer id) {
+    public Membersbankdetails findMembersbankdetails(String id) {
         EntityManager em = LocalEntityManagerFactory.createEntityManager();
         try {
-            return em.find(Trans.class, id);
+            return em.find(Membersbankdetails.class, id);
+        } finally {
+            em.close();
+        }
+    }
+    
+     public List<Membersbankdetails> getmemberBankDetails(String memberNo){
+        EntityManager em = LocalEntityManagerFactory.createEntityManager();
+        try {
+            
+            return em.createNamedQuery("Membersbankdetails.findByMemberno", Membersbankdetails.class)
+                    .setParameter("memberno", memberNo)
+                    .getResultList();
         } finally {
             em.close();
         }
     }
 
-    public int getTransCount() {
+    public int getMembersbankdetailsCount() {
         EntityManager em = LocalEntityManagerFactory.createEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Trans> rt = cq.from(Trans.class);
+            Root<Membersbankdetails> rt = cq.from(Membersbankdetails.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
         } finally {
             em.close();
         }
-    } public List<Trans> ListaccountTransactions(String acctNo) {
-        String querry = "SELECT * FROM TRANS WHERE ACCOUNT_NO=? AND CONFIRMED IS NOT NULL AND DELETED IS NULL AND REVERSED IS NULL order by TRANS_DATE asc";
-        try {
-             em = LocalEntityManagerFactory.createEntityManager();
-              return    em.createNativeQuery(querry,Trans.class)
-                          .setParameter("1", acctNo)
-                           .getResultList();
-             
-        } finally {
-            em.close();
-        }
     }
-    public List<Trans> ListunconfirmedTransactions(String username) {
-        String querry = "SELECT * FROM TRANS WHERE CONFIRMED IS NULL AND U_NAME !=? ";
-        try {
-             em = LocalEntityManagerFactory.createEntityManager();
-              return    em.createNativeQuery(querry,Trans.class)
-                          .setParameter("1", username)
-                           .getResultList();
-             
-        } finally {
-            em.close();
-        }
-    }
-    
-    
-    
     
 }

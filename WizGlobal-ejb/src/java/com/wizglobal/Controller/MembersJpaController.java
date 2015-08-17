@@ -177,6 +177,38 @@ public class MembersJpaController implements Serializable {
             em.close();
         }
     }
+   
+    
+       public List<Members> findUnregisteredCustomers() {
+        
+       String querry = "select  * from MEMBERS where WEBPASS IS NULL AND CONFIRMED ='1' ORDER BY MEMBER_NO " ;
+         EntityManager em = LocalEntityManagerFactory.createEntityManager();
+        try {
+             
+            
+              return    em.createNativeQuery(querry,Members.class)
+                           .getResultList();
+             
+        } finally {
+            em.close();
+        }
+       }  
+        public List<Members> findUnconfirmedMembers(String username) {
+        
+       String querry = "select * from members where CONFIRMED IS NULL AND UNAME !=? " ;
+         EntityManager em = LocalEntityManagerFactory.createEntityManager();
+        try {
+             
+            
+              return    em.createNativeQuery(querry,Members.class)
+                        .setParameter("1", username)
+                           .getResultList();
+             
+        } finally {
+            em.close();
+        }
+        
+    }
 
     public int getMembersCount() {
         EntityManager em = getEntityManager();

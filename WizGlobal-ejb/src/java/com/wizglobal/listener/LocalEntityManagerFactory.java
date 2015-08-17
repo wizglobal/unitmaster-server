@@ -16,7 +16,9 @@ public class LocalEntityManagerFactory implements ServletContextListener{
     private static EntityManagerFactory emf;  
     @Override  
     public void contextInitialized(ServletContextEvent event) {  
-        emf = Persistence.createEntityManagerFactory("WizGlobal-ejbPU");  
+        emf = Persistence.createEntityManagerFactory("WizGlobal-ejbPU"); 
+        
+            
     }  
     @Override  
     public void contextDestroyed(ServletContextEvent event) {  
